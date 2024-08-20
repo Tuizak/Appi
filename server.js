@@ -280,3 +280,45 @@ app.get('/api/clientes-tinacos', (req, res) => {
     });
 });
 
+app.get('/api/sensores', (req, res) => {
+    const sql = `SELECT id_sensor, fecha, hora, distancia FROM Sensores ORDER BY fecha DESC, hora DESC LIMIT 10`;
+    req.db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error fetching sensor data:', err);
+            return res.status(500).send('Error fetching sensor data: ' + err.message);
+        }
+        
+        // Convertir distancia a porcentaje antes de enviar la respuesta
+        const conversiones = [
+            { cm: 14, porcentaje: 0 },
+            { cm: 12.9, porcentaje: 10 },
+            { cm: 11.8, porcentaje: 20 },
+            { cm: 10.7, porcentaje: 30 },
+            { cm: 9.6, porcentaje: 40 },
+            { cm: 8.5, porcentaje: 50 },
+            { cm: 7.4, porcentaje: 60 },
+            { cm: 6.3, porcentaje: 70 },
+            { cm: 5.2, porcentaje: 80 },
+            { cm: 4.1, porcentaje: 90 },
+            { cm: 3, porcentaje: 100 },
+        ];
+
+        function convertirADistanciaPorcentaje(distancia) {
+            for (let i = 0; i < conversiones.length; i++) {
+                if (distancia >= conversiones[i].cm) {
+                    return conversiones[i].porcentaje;
+                }
+            }
+            return 0;
+        }
+
+        const datosConvertidos = results.map(dato => ({
+            ...dato,
+            porcentaje: convertirADistanciaPorcentaje(dato.distancia)
+        }));
+
+        res.status(200).send(datosConvertidos);
+    });
+});
+
+
