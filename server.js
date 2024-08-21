@@ -80,7 +80,7 @@ function validateRequiredFields(entity, data) {
     return null;
 }
 
-// CRUD básico para cada entidad
+
 Object.keys(requiredFieldsMap).forEach(entity => {
     // Create
     app.post(`/api/${entity}`, (req, res) => {
@@ -104,7 +104,7 @@ Object.keys(requiredFieldsMap).forEach(entity => {
         });
     });
 
-    // Read all
+  
     app.get(`/api/${entity}`, (req, res) => {
         const sql = `SELECT * FROM ${entity.charAt(0).toUpperCase() + entity.slice(1)}`;
         req.db.query(sql, (err, results) => {
@@ -116,7 +116,7 @@ Object.keys(requiredFieldsMap).forEach(entity => {
         });
     });
 
-    // Read by id
+   
     app.get(`/api/${entity}/id/:id`, (req, res) => {
         const { id } = req.params;
         const sql = `SELECT * FROM ${entity.charAt(0).toUpperCase() + entity.slice(1)} WHERE id = ?`;
@@ -129,15 +129,15 @@ Object.keys(requiredFieldsMap).forEach(entity => {
         });
     });
 
-    // Update by id
+ 
     app.put(`/api/${entity}/id/:id`, (req, res) => {
         const { id } = req.params;
         const data = req.body;
 
-        // Log the received request
+      
         console.log('Received PUT request:', { id, data });
 
-        // Validate the Estado field
+        
         if (!data.Estado || (data.Estado !== 'Activo' && data.Estado !== 'Inactivo')) {
             return res.status(400).send('El campo "Estado" es obligatorio y debe ser "Activo" o "Inactivo".');
         }
@@ -156,7 +156,7 @@ Object.keys(requiredFieldsMap).forEach(entity => {
         });
     });
 
-    // Delete by id
+
     app.delete(`/api/${entity}/id/:id`, (req, res) => {
         const { id } = req.params;
         const sql = `DELETE FROM ${entity.charAt(0).toUpperCase() + entity.slice(1)} WHERE id = ?`;
@@ -170,11 +170,11 @@ Object.keys(requiredFieldsMap).forEach(entity => {
     });
 });
 
-// Ruta de inicio de sesión
+
 app.post('/Home', (req, res) => {
     const { nombre, claveUnica, contraseña } = req.body;
 
-    // Validar los datos de entrada
+  
     if (!nombre || !claveUnica || !contraseña) {
         return res.status(400).send('Nombre, ClaveUnica y Contraseña son obligatorios.');
     }
@@ -186,16 +186,16 @@ app.post('/Home', (req, res) => {
             console.error('Error querying the database:', err);
             return res.status(500).send('Error querying the database: ' + err.message);
         } else if (results.length > 0) {
-            const userData = results[0]; // Obtener datos del primer administrativo encontrado
-            console.log('User Data:', userData); // Agregar esto para verificar los datos
-            res.status(200).send(userData); // Devolver datos del administrativo
+            const userData = results[0]; 
+            console.log('User Data:', userData);
+            res.status(200).send(userData); 
         } else {
             res.status(401).send('Credenciales inválidas');
         }
     });
 });
 
-// Rutas específicas para obtener todos los empleados y clientes
+
 app.get('/api/empleados', (req, res) => {
     const sql = 'SELECT * FROM Empleado';
     req.db.query(sql, (err, results) => {
@@ -218,9 +218,7 @@ app.get('/api/clientes', (req, res) => {
     });
 });
 
-// Rutas para los procedimientos almacenados
 
-// Ruta para insertar un mensaje
 app.post('/api/mensaje', (req, res) => {
     const { id_cliente, mensaje, fecha, hora } = req.body;
 
@@ -234,7 +232,6 @@ app.post('/api/mensaje', (req, res) => {
     });
 });
 
-// Ruta para obtener todos los mensajes
 app.get('/api/mensajes', (req, res) => {
     const sql = 'CALL ObtenerMensajes()';
     req.db.query(sql, (err, results) => {
@@ -250,7 +247,7 @@ app.listen(port, () => {
     console.log(`API listening at http://localhost:${port}`);
 });
 
-// Ruta para obtener clientes con información de tinacos
+
 app.get('/api/clientes-tinacos', (req, res) => {
     const sql = `
         SELECT
@@ -288,7 +285,7 @@ app.get('/api/sensores', (req, res) => {
             return res.status(500).send('Error fetching sensor data: ' + err.message);
         }
         
-        // Convertir distancia a porcentaje antes de enviar la respuesta
+
         const conversiones = [
             { cm: 14, porcentaje: 0 },
             { cm: 12.9, porcentaje: 10 },
